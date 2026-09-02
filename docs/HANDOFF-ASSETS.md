@@ -6,7 +6,7 @@
 - 개발 서버: `npm run dev` (기본 5175 포트), 타입체크 `npx tsc --noEmit -p .`, 테스트 `npm test`
 - 에셋 루트: `public/assets/`
 - 슬롯 목록 출력: `node tools/asset-list.mjs` (사람용) / `--json` (기계용) / `--manifest` (매니페스트 뼈대)
-- **총 221 슬롯 / 파일 398장**
+- **총 275 슬롯 / 파일 941장** (움직이는 것은 전부 프레임 애니메이션, UI 스킨·투사체·스킬 이펙트 포함)
 
 ---
 
@@ -81,18 +81,23 @@ side view, full body, centered, transparent background, no text, no watermark, n
 
 | 그룹 | 개수 | id 형식 | 권장 해상도 | 프레임 | 논리 높이 |
 |---|---|---|---|---|---|
-| 주인공 | 17 | `hero_novice`, `hero_{warrior\|mage\|archer\|thief}_{1..4}` | 256×256 | idle/walk/attack/hit | 64 |
-| 몬스터 | 30 | `fluff`, `hopbun`, … (지역별 3종 × 10) | 256×256 | idle/walk/attack/hit | 64 |
-| 보스 | 10 | `fluffking`, `guardiantree`, … | 320×320 | idle/walk/attack/hit | 72 |
-| 레이드/아레나 | 2 | `raidlord`, `ghost` | 320×320 | idle/walk/attack/hit | 72 |
-| 펫 | 6 | `pet_0` … `pet_5` (등급순) | 128×128 | idle | 34 |
-| 동료 | 8 | `companion_{id}` + 아이콘 `companion_icon_{id}` | 128×128 | idle | 30 |
+| 주인공 | 17 | `hero_novice`, `hero_{warrior\|mage\|archer\|thief}_{1..4}` | 256×256 | idle×2 walk×4 attack×3 cast×2 hit×1 death×3 | 64 |
+| 몬스터 | 30 | `fluff`, `hopbun`, … (지역별 3종 × 10) | 256×256 | idle×2 walk×2 attack×2 hit×1 death×2 | 64 |
+| 보스 | 10 | `fluffking`, `guardiantree`, … | 320×320 | idle×2 walk×2 attack×3 hit×1 death×3 | 72 |
+| 레이드/아레나 | 2 | `raidlord`, `ghost` | 320×320 | 보스와 동일 | 72 |
+| 펫 | 6 | `pet_0` … `pet_5` (등급순) | 128×128 | idle×2 | 34 |
+| 동료 | 8 | `companion_{id}` + 아이콘 `companion_icon_{id}` | 128×128 | idle×2 attack×2 | 30 |
 | 배경 | 30 | `bg_{region}_far` / `bg_{region}_near` / `ground_{region}` | 1024×576 / 1024×384 / 512×256 | – | – |
 | 장비 아이콘 | 48 | `icon_weapon_{job}_{0..5}`, `icon_{armor\|accessory\|pet}_{0..5}` | 128×128 | – | – |
 | 스킬 아이콘 | 17 | `skill_{skillId}` | 128×128 | – | – |
 | 유물 | 6 | `artifact_{id}` | 128×128 | – | – |
 | 탭/퀵 아이콘 | 12 | `tab_{id}`, `quick_{id}` | 96×96 | – | – |
 | UI 기타 | 9 | `ui_gold`, `ui_gem`, `ui_ticket`, `ui_cube`, `ui_star`, `ui_logo`, `ui_portal`, `ui_signpost`, `ui_platform`, `ui_rope` | 96~768 | – | – |
+| 투사체 | 4 | `proj_{arrow\|orb\|shuriken\|bolt}` | 128×64 | idle×2 | 14 |
+| 스킬 이펙트 | 17 | `skillfx_{skillId}` | 256×256 | attack×3 | 90 |
+| UI 스킨 | 20 | `ui_panel`, `ui_btn_*`, `ui_bar_*`, `ui_tabbar`, `ui_modal_frame` … | 64~512 | – | – |
+| 등급 테두리 | 6 | `ui_rarity_{0..5}` | 128×128 | – | – |
+| 강화 아이콘 | 7 | `ui_stat_{atk\|hp\|def\|crit\|critdmg\|aspd\|regen}` | 96×96 | – | – |
 | 이펙트 | 17 | `fx_{id}` | 256×256 | – | – |
 
 지역 10곳(고정 순서): `meadow 초록 초원` · `fireflyforest 반딧불 숲` · `shellbeach 소라 해변` · `candlehouse 촛불 폐가` · `frostpeak 서리 산` · `sanddune 모래 사막` · `ruins 고대 유적` · `skygarden 하늘 정원` · `dragonnest 용의 둥지` · `abyss 심연`
@@ -141,6 +146,10 @@ side view, full body, centered, transparent background, no text, no watermark, n
 - 퀘스트 체인, 업적 16종, 몬스터 도감 40종, 전세계 랭킹(스테이지·레벨)
 
 ---
+
+## 5-1. 해상도 / 화면 모드
+
+세로(기본)와 **가로모드** 둘 다 지원합니다. 가로에서는 전투 화면이 전체 폭을 쓰고 메뉴가 오른쪽 46% 패널로 열립니다. 배경 원경/근경은 **가로로 반복**되므로 좌우 이음새가 반드시 맞아야 합니다(세로 이음새는 필요 없음). 땅 타일도 동일.
 
 ## 6. 작업 순서 추천
 

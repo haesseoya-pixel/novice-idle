@@ -46,6 +46,7 @@ export class Scene {
   private groundFrac = 0.72;
   private groundTarget = 0.72;
   private viewScale = 1;
+  private anchorFrac = 0.34;
 
   constructor(canvas: HTMLCanvasElement, game: Game, assets: Assets) {
     this.canvas = canvas;
@@ -65,8 +66,11 @@ export class Scene {
     this.canvas.width = Math.round(this.w * this.dpr);
     this.canvas.height = Math.round(this.h * this.dpr);
     // fit the 360-wide arena; on wide screens scale by height instead
-    this.s = clamp(Math.min(this.w / ARENA_W, this.h / 300) * 1.25 * this.viewScale, 0.7, 3);
-    this.ox = (this.w - ARENA_W * this.s) / 2;
+    const landscape = this.w > this.h * 1.3;
+    // 가로에서는 높이 기준으로 키운다(폭이 남으므로 캐릭터가 작아지지 않게)
+    const base = landscape ? this.h / 210 : Math.min(this.w / ARENA_W, this.h / 300) * 1.25;
+    this.s = clamp(base * this.viewScale, 0.7, 4);
+    this.ox = landscape ? this.w * this.anchorFrac - HERO.x * this.s : (this.w - ARENA_W * this.s) / 2;
     this.gy = Math.round(this.h * this.groundFrac);
   }
 
@@ -79,6 +83,13 @@ export class Scene {
   setViewScale(f: number): void {
     if (this.viewScale === f) return;
     this.viewScale = f;
+    this.resize();
+  }
+
+  /** Where the hero sits horizontally, as a fraction of canvas width (landscape only). */
+  setAnchorFrac(f: number): void {
+    if (this.anchorFrac === f) return;
+    this.anchorFrac = f;
     this.resize();
   }
 

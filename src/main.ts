@@ -89,10 +89,13 @@ async function boot(): Promise<void> {
     openReclass: (p) => modals.openReclass(p),
     rank: { submitNow: () => submitRanks(true) },
     onSheet: (open) => {
-      frame.style.setProperty('--hud-bottom', open ? 'var(--sheet-h)' : 'var(--tabbar-h)');
+      const land = window.matchMedia('(orientation: landscape)').matches;
+      frame.style.setProperty('--hud-bottom', open && !land ? 'var(--sheet-h)' : 'var(--tabbar-h)');
       document.body.classList.toggle('sheet-open', open);
-      scene.setGroundFrac(open ? 0.44 : 0.72);
-      scene.setViewScale(open ? 0.78 : 1);
+      scene.setGroundFrac(open && !land ? 0.44 : 0.72);
+      scene.setViewScale(open && !land ? 0.78 : 1);
+      scene.setAnchorFrac(land && open ? 0.2 : 0.34);
+      window.setTimeout(() => scene.resize(), 240);
     },
   });
   window.setInterval(() => void submitRanks(), 90000);
@@ -264,8 +267,8 @@ async function boot(): Promise<void> {
   // ---- lifecycle ------------------------------------------------------------
   const ro = new ResizeObserver(() => scene.resize());
   ro.observe(sceneWrap);
-  scene.setGroundFrac(0.44);
-  scene.setViewScale(0.78);
+  window.addEventListener('resize', () => scene.resize());
+  window.visualViewport?.addEventListener('resize', () => scene.resize());
   document.body.classList.add('sheet-open');
   window.addEventListener('orientationchange', () => window.setTimeout(() => scene.resize(), 120));
   document.addEventListener('visibilitychange', () => {

@@ -130,7 +130,11 @@ const ICON_STYLE = 'cute cartoon RPG game item icon, single object, thick dark o
 const BG_STYLE = '2D side-scrolling mobile RPG background art, cute cartoon style, painterly flat shading, vibrant colors, no characters, no text, no UI';
 
 const rows = [];
+/** frames: null(단일 이미지) 또는 { 애니메이션이름: 장수 } */
 const add = (id, kind, w, h, frames, prompt, note) => rows.push({ id, kind, w, h, frames, prompt, note });
+const HERO_ANIM = { idle: 2, walk: 4, attack: 3, cast: 2, hit: 1, death: 3 };
+const MON_ANIM = { idle: 2, walk: 2, attack: 2, hit: 1, death: 2 };
+const BOSS_ANIM = { idle: 2, walk: 2, attack: 3, hit: 1, death: 3 };
 
 // ---- heroes: 17 sprites × 4 animations -------------------------------------
 for (const [job, koJob, look] of JOBS) {
@@ -138,19 +142,19 @@ for (const [job, koJob, look] of JOBS) {
   for (const t of tiers) {
     const id = job === 'novice' ? 'hero_novice' : `hero_${job}_${t}`;
     const tierLook = t === 0 ? '' : `, ${TIERS[t]}`;
-    add(id, 'sprite', 256, 256, ['idle', 'walk', 'attack', 'hit'], `${look}${tierLook}, facing right, ${SPRITE_STYLE}`, `${koJob}${t ? ` ${t}차` : ''} · 여성 주인공 · 4방향 애니메이션(idle/walk/attack/hit) · 논리 높이 64px · 발끝이 앵커`);
+    add(id, 'sprite', 256, 256, HERO_ANIM, `${look}${tierLook}, facing right, ${SPRITE_STYLE}`, `${koJob}${t ? ` ${t}차` : ''} · 여성 주인공 · 논리 높이 64px · 발끝 앵커 · idle 숨쉬기2 / walk 4보 / attack 예비-타격-복귀3 / cast 2 / hit 1 / death 쓰러짐3`);
   }
 }
 // ---- monsters --------------------------------------------------------------
 for (const [id, ko, desc] of MONSTERS) {
   const boss = BOSSES.has(id);
-  add(id, 'sprite', boss ? 320 : 256, boss ? 320 : 256, ['idle', 'walk', 'attack', 'hit'], `${boss ? 'large imposing boss monster, ' : 'small monster, '}${desc}, facing left, ${SPRITE_STYLE}`, `${ko}${boss ? ' (보스)' : ''} · 논리 높이 ${boss ? 72 : 64}px`);
+  add(id, 'sprite', boss ? 320 : 256, boss ? 320 : 256, boss ? BOSS_ANIM : MON_ANIM, `${boss ? 'large imposing boss monster, ' : 'small monster, '}${desc}, facing left, ${SPRITE_STYLE}`, `${ko}${boss ? ' (보스)' : ''} · 논리 높이 ${boss ? 72 : 64}px · 왼쪽을 봄 · attack은 앞으로 달려드는 모션 · death는 넘어지며 사라짐`);
 }
-for (const [id, ko, desc] of RAID_ARENA) add(id, 'sprite', 320, 320, ['idle', 'walk', 'attack', 'hit'], `${desc}, facing left, ${SPRITE_STYLE}`, `${ko} · 레이드/아레나 전용`);
+for (const [id, ko, desc] of RAID_ARENA) add(id, 'sprite', 320, 320, BOSS_ANIM, `${desc}, facing left, ${SPRITE_STYLE}`, `${ko} · 레이드/아레나 전용 · 논리 높이 72px`);
 // ---- pets & companions ------------------------------------------------------
-for (let r = 0; r < 6; r++) add(`pet_${r}`, 'sprite', 128, 128, ['idle'], `tiny cute pet companion creature, ${RARITIES[r]} quality, floating beside the hero, ${SPRITE_STYLE}`, `펫 ${r}등급 · 논리 높이 34px`);
+for (let r = 0; r < 6; r++) add(`pet_${r}`, 'sprite', 128, 128, { idle: 2 }, `tiny cute pet companion creature, ${RARITIES[r]} quality, floating beside the hero, ${SPRITE_STYLE}`, `펫 ${r}등급 · 논리 높이 34px · idle 2장으로 위아래 둥실`);
 for (const [id, ko, desc] of COMPANIONS) {
-  add(`companion_${id}`, 'sprite', 128, 128, ['idle'], `${desc}, floating, ${SPRITE_STYLE}`, `동료 ${ko} · 전투 화면에서 주인공 뒤를 따라다님 · 논리 높이 30px`);
+  add(`companion_${id}`, 'sprite', 128, 128, { idle: 2, attack: 2 }, `${desc}, floating, ${SPRITE_STYLE}`, `동료 ${ko} · 주인공 뒤를 둥실 따라다니다 주기적으로 돌진 · 논리 높이 30px`);
   add(`companion_icon_${id}`, 'image', 128, 128, null, `${desc}, portrait bust, ${ICON_STYLE}`, `동료 ${ko} 아이콘 (동료 탭 카드)`);
 }
 // ---- backgrounds ------------------------------------------------------------
@@ -178,11 +182,51 @@ add('ui_signpost', 'image', 192, 192, null, `wooden RPG signpost, side view, ${I
 add('ui_platform', 'image', 256, 96, null, `floating wooden platform / foothold with grass on top, side view, horizontally tileable center, ${ICON_STYLE}`, '공중 발판 (가로 늘려서 사용)');
 add('ui_rope', 'image', 64, 256, null, `hanging rope ladder, vertical, tileable, ${ICON_STYLE}`, '발판 밧줄 (세로 반복)');
 // ---- effects ----------------------------------------------------------------
+// ---- 투사체 -------------------------------------------------------------------
+const PROJECTILES = [
+  ['arrow', '화살', 'glowing wooden arrow with green fletching, motion trail'],
+  ['orb', '마법구', 'glowing blue-purple magic orb with a sparkle trail'],
+  ['shuriken', '표창', 'silver four point throwing star, spinning'],
+  ['bolt', '전격탄', 'crackling yellow lightning bolt projectile'],
+];
+for (const [id, ko, desc] of PROJECTILES) add(`proj_${id}`, 'sprite', 128, 64, { idle: 2 }, `${desc}, side view pointing right, ${SPRITE_STYLE}`, `투사체 ${ko} · 논리 높이 14px · 좌우 반전해 사용 · idle 2장 반짝임`);
+
+// ---- 스킬 발동 이펙트 (스킬마다 3프레임) -----------------------------------------
+for (const [id, ko, desc] of SKILLS) add(`skillfx_${id}`, 'sprite', 256, 256, { attack: 3 }, `2D game skill effect animation, ${desc}, cartoon anime style, glowing, centered, transparent background, no text`, `스킬 이펙트 ${ko} · 3프레임(발생-절정-소멸) · 논리 높이 90px · 가산합성`);
+
+// ---- UI 스킨 (패널/버튼/게이지/탭바/모달) -----------------------------------------
+const UI_SKIN = [
+  ['ui_panel', 512, 512, 'rounded dark purple game panel with a light border and soft inner glow', '시트·카드 배경 (9슬라이스, 모서리 32px)'],
+  ['ui_panel_dark', 512, 512, 'darker rounded inset panel for list rows', '리스트 행 배경 (9슬라이스)'],
+  ['ui_btn_gold', 256, 128, 'golden rounded glossy game button with a thick border, empty center', '주요 버튼 (강화·전직·수령)'],
+  ['ui_btn_gold_press', 256, 128, 'the same golden button in a pressed darker state', '주요 버튼 눌림'],
+  ['ui_btn_purple', 256, 128, 'purple rounded glossy game button', '뽑기·큐브 버튼'],
+  ['ui_btn_red', 256, 128, 'red rounded glossy game button', '보스·레이드 버튼'],
+  ['ui_btn_green', 256, 128, 'green rounded glossy game button', '합성·자동 ON 버튼'],
+  ['ui_btn_gray', 256, 128, 'gray flat disabled rounded game button', '비활성 버튼'],
+  ['ui_bar_frame', 256, 64, 'empty rounded gauge frame with a dark inner groove', 'HP·EXP·보스 게이지 테두리 (9슬라이스)'],
+  ['ui_bar_hp', 256, 64, 'green glossy gauge fill', 'HP 채움'],
+  ['ui_bar_exp', 256, 64, 'blue glossy gauge fill', 'EXP 채움'],
+  ['ui_bar_boss', 256, 64, 'red glossy gauge fill', '보스 HP 채움'],
+  ['ui_bar_stage', 256, 64, 'golden glossy gauge fill', '스테이지 진행 채움'],
+  ['ui_tabbar', 512, 128, 'bottom tab bar background strip, dark purple with a bright top edge', '하단 탭바 배경'],
+  ['ui_tab_active', 128, 128, 'glowing rounded highlight plate behind the selected tab', '선택된 탭 배경'],
+  ['ui_modal_frame', 512, 512, 'ornate fantasy dialog frame with golden corners, empty center', '모달 테두리 (9슬라이스)'],
+  ['ui_portrait_frame', 128, 128, 'golden rounded portrait frame, empty center', '캐릭터 초상화 테두리'],
+  ['ui_slot_empty', 128, 128, 'empty dark equipment slot with a dashed inner border', '빈 장비·동료 슬롯'],
+  ['ui_badge_new', 64, 64, 'small red NEW notification dot with a glow', '알림 뱃지'],
+  ['ui_toast', 512, 128, 'rounded translucent notification banner plate', '토스트 배경 (9슬라이스)'],
+];
+for (const [id, w, hh, desc, note] of UI_SKIN) add(id, 'image', w, hh, null, `${desc}, Korean mobile RPG UI element, clean vector look, thick outline, transparent background, no text`, note);
+for (let r = 0; r < 6; r++) add(`ui_rarity_${r}`, 'image', 128, 128, null, `equipment slot frame border in ${RARITIES[r]} rarity color, empty center, transparent background, no text`, `등급 테두리 ${r} (아이콘 뒤에 깔림)`);
+const STAT_ICON = [['atk', '공격력', 'crossed swords'], ['hp', '체력', 'red heart'], ['def', '방어력', 'blue shield'], ['crit', '치명타 확률', 'target with an arrow'], ['critdmg', '치명타 피해', 'explosion burst'], ['aspd', '공격 속도', 'lightning bolt'], ['regen', '체력 재생', 'green cross with sparkles']];
+for (const [id, ko, desc] of STAT_ICON) add(`ui_stat_${id}`, 'image', 96, 96, null, `game stat icon, ${desc}, ${ICON_STYLE}`, `돌파 강화 아이콘 ${ko}`);
+
 const FX = [['hit', 'white and yellow star-shaped impact spark'], ['crit', 'bright orange critical hit burst with stars'], ['slash', 'curved white and orange sword slash arc'], ['fireball', 'round glowing orange fireball with a flame trail'], ['explosion', 'orange and yellow explosion burst'], ['lightning', 'jagged blue-white lightning bolt'], ['arrow', 'glowing green magic arrow'], ['shuriken', 'silver four point throwing star'], ['poison', 'bubbling green poison cloud'], ['meteor', 'flaming meteor rock with a fire trail'], ['heal', 'green sparkling healing light'], ['shield', 'translucent blue hexagonal energy shield bubble'], ['smoke', 'gray smoke puff'], ['levelup', 'golden rising light rays with sparkles'], ['jobaura', 'radiant golden transformation aura pillar'], ['coin', 'spinning gold coin'], ['deathpoof', 'white and gray defeat poof cloud']];
 for (const [id, desc] of FX) add(`fx_${id}`, 'image', 256, 256, null, `2D game visual effect sprite, ${desc}, cartoon anime style, glowing, centered, transparent background, no text`, `이펙트 ${id} (가산합성으로 그려짐)`);
 
 const total = rows.length;
-const files = rows.reduce((n, r) => n + (r.frames ? r.frames.length : 1), 0);
+const files = rows.reduce((n, r) => n + (r.frames ? Object.values(r.frames).reduce((a, b) => a + b, 0) : 1), 0);
 
 if (process.argv.includes('--json')) {
   console.log(JSON.stringify({ total, files, rows }, null, 1));
@@ -192,8 +236,9 @@ if (process.argv.includes('--json')) {
   for (const r of rows) {
     if (r.kind === 'sprite') {
       const frames = {};
-      for (const f of r.frames) frames[f] = [`sprites/${r.id}_${f}.png`];
-      sprites[r.id] = { frames, height: r.note.includes('72px') ? 72 : r.note.includes('34px') ? 34 : r.note.includes('30px') ? 30 : 64, fps: { walk: 6, attack: 10 } };
+      for (const [anim, count] of Object.entries(r.frames)) frames[anim] = Array.from({ length: count }, (_, i) => `sprites/${r.id}_${anim}${count > 1 ? '_' + i : ''}.png`);
+      const mh = /논리 높이 (\d+)px/.exec(r.note);
+      sprites[r.id] = { frames, height: mh ? Number(mh[1]) : 64, fps: { idle: 3, walk: 8, attack: 12, cast: 8, death: 6 } };
     } else {
       images[r.id] = `${r.id.startsWith('bg_') || r.id.startsWith('ground_') ? 'bg' : r.id.startsWith('icon_') || r.id.startsWith('skill_') || r.id.startsWith('artifact_') || r.id.startsWith('companion_icon_') ? 'icons' : r.id.startsWith('fx_') ? 'fx' : 'ui'}/${r.id}.png`;
     }
@@ -208,7 +253,8 @@ if (process.argv.includes('--json')) {
       kind = k;
       console.log('');
     }
-    console.log(`${r.id.padEnd(26)} ${r.kind.padEnd(7)} ${String(r.w).padStart(4)}x${String(r.h).toString().padEnd(4)} ${(r.frames ? r.frames.join('/') : '-').padEnd(22)} ${r.note}`);
+    const fr = r.frames ? Object.entries(r.frames).map(([a, n]) => a + '×' + n).join(' ') : '-';
+    console.log(`${r.id.padEnd(24)} ${r.kind.padEnd(6)} ${String(r.w).padStart(4)}x${String(r.h).toString().padEnd(4)} ${fr.padEnd(46)} ${r.note}`);
   }
   console.log(`\n총 ${total} 슬롯 / ${files} 파일`);
 }
