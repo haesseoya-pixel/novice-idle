@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#120c22" />
+    <meta name="description" content="초보자 키우기: 전직의 대륙 — 초보자로 시작해 전사·마법사·궁수·도적 4차 전직까지 키우는 방치형 RPG. 100 스테이지의 대륙, 보스, 장비 뽑기·합성·스타포스·잠재능력, 무한의 탑, 전세계 랭킹." />
+    <meta property="og:title" content="초보자 키우기: 전직의 대륙" />
+    <meta property="og:description" content="자동 전투 방치형 RPG. Lv10 1차 전직부터 Lv100 4차 전직까지, 열 개 지역의 대륙을 정복하세요." />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23120c22'/%3E%3Ccircle cx='32' cy='26' r='12' fill='%23ffd8b4' stroke='%231c1630' stroke-width='3'/%3E%3Cpath d='M20 22a12 12 0 0 1 24 0q-5-5-12-4-7-1-12 4z' fill='%23c0392b'/%3E%3Crect x='20' y='38' width='24' height='18' rx='6' fill='%236fa7d8' stroke='%231c1630' stroke-width='3'/%3E%3Cpath d='M44 42l14-14' stroke='%23e8ecf5' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <title>초보자 키우기: 전직의 대륙</title>
+  </head>
+  <body>
+    <div id="app" class="app">
+      <div class="frame" id="frame">
+        <section class="scene-wrap" id="sceneWrap">
+          <canvas id="scene" aria-label="전투" role="img"></canvas>
+        </section>
+        <div id="hud" class="hud"></div>
+        <div id="hint" class="hint" hidden></div>
+        <section class="sheet" id="sheet">
+          <header class="sheet-head" id="sheetHead"></header>
+          <div class="sheet-body" id="tabBody"></div>
+        </section>
+        <nav class="tabbar" id="tabbar" aria-label="메뉴"></nav>
+        <div id="toasts" class="toasts" aria-live="polite"></div>
+      </div>
+    </div>
+    <div id="modalRoot" class="modal-root" hidden></div>
+    <div id="storageWarn" class="storage-warn" hidden>저장 불가: 이 브라우저에서는 진행 상황이 유지되지 않습니다.</div>
+    <div id="loading" class="loading">
+      <div class="loading-title">초보자 키우기</div>
+      <div class="loading-sub">전직의 대륙</div>
+      <div class="loading-track"><div id="loadingBar" class="loading-bar"></div></div>
+      <div id="loadingText" class="small muted">준비 중…</div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
