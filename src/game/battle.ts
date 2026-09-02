@@ -114,6 +114,8 @@ export interface BattleState {
   heroAttackT: number;
   heroCastT: number;
   heroHurtT: number;
+  /** 몬스터가 등장하는 필드 폭 (화면이 넓으면 늘어난다) */
+  arenaW: number;
   time: number;
   nextId: number;
   seed: number;
@@ -166,6 +168,7 @@ export function createBattle(gs: GameState, stats: HeroStats): BattleState {
     heroAttackT: 99,
     heroCastT: 99,
     heroHurtT: 99,
+    arenaW: ARENA_W,
     time: 0,
     nextId: 1,
     seed: (gs.pity.seed ^ 0x5bd1e995) >>> 0 || 1,
@@ -266,7 +269,7 @@ function spawnMonster(gs: GameState, b: BattleState): void {
   b.monsters.push({
     id: b.nextId++,
     type,
-    x: ARENA_W + 40 + rng(b) * 30,
+    x: b.arenaW + 40 + rng(b) * 30,
     hp,
     maxHp: hp,
     atk,
@@ -914,6 +917,11 @@ export function battleTick(gs: GameState, b: BattleState, stats: HeroStats, dt: 
     stageClear(gs, b, events);
   }
   return events;
+}
+
+/** 화면 가로가 넓으면 필드도 넓게 (몬스터가 화면 밖에서 걸어 들어오도록). */
+export function setArenaWidth(b: BattleState, w: number): void {
+  b.arenaW = Math.max(ARENA_W, Math.min(1200, Math.round(w)));
 }
 
 export function heroHpFraction(b: BattleState): number {

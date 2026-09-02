@@ -1,5 +1,5 @@
 import type { Game } from '@/app/game';
-import { ARENA_W, type Monster } from '@/game/battle';
+import { ARENA_W, setArenaWidth, type Monster } from '@/game/battle';
 import { HERO, MONSTER, RARITY_COLORS } from '@/game/balance';
 import { JOBS } from '@/game/jobs';
 import { stageInfo } from '@/game/monsters';
@@ -46,7 +46,7 @@ export class Scene {
   private groundFrac = 0.72;
   private groundTarget = 0.72;
   private viewScale = 1;
-  private anchorFrac = 0.34;
+  private anchorFrac = 0.22;
 
   constructor(canvas: HTMLCanvasElement, game: Game, assets: Assets) {
     this.canvas = canvas;
@@ -68,9 +68,11 @@ export class Scene {
     // fit the 360-wide arena; on wide screens scale by height instead
     const landscape = this.w > this.h * 1.3;
     // 가로에서는 높이 기준으로 키운다(폭이 남으므로 캐릭터가 작아지지 않게)
-    const base = landscape ? this.h / 210 : Math.min(this.w / ARENA_W, this.h / 300) * 1.25;
+    const base = landscape ? this.h / 460 : Math.min(this.w / ARENA_W, this.h / 380) * 1.25;
     this.s = clamp(base * this.viewScale, 0.7, 4);
     this.ox = landscape ? this.w * this.anchorFrac - HERO.x * this.s : (this.w - ARENA_W * this.s) / 2;
+    // 넓은 화면에서는 몬스터가 화면 밖에서 걸어 들어오도록 필드 폭을 늘린다
+    setArenaWidth(this.game.battle, (this.w - this.ox) / this.s - 20);
     this.gy = Math.round(this.h * this.groundFrac);
   }
 
@@ -342,7 +344,7 @@ export class Scene {
     const b = this.game.battle;
     const info = stageInfo(b.stage);
     if (b.mode !== 'stage') return;
-    const px = 348;
+    const px = this.game.battle.arenaW - 14;
     const pulse = 1 + Math.sin(this.time * 4) * 0.06;
     const portalImg = this.assets.image('ui_portal');
     const signImg = this.assets.image('ui_signpost');

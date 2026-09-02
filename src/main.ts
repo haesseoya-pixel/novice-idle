@@ -94,7 +94,7 @@ async function boot(): Promise<void> {
       document.body.classList.toggle('sheet-open', open);
       scene.setGroundFrac(open && !land ? 0.44 : 0.72);
       scene.setViewScale(open && !land ? 0.78 : 1);
-      scene.setAnchorFrac(land && open ? 0.2 : 0.34);
+      scene.setAnchorFrac(land && open ? 0.14 : 0.22);
       window.setTimeout(() => scene.resize(), 240);
     },
   });
