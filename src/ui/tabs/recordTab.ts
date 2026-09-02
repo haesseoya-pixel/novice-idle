@@ -48,7 +48,8 @@ export function createRecordTab(game: Game, rankHooks: RankTabHooks, hooks: { op
     missionEls.set(m.id, { root, prog, bar, btn });
   }
   const missionBonus = h('div', { class: 'tiny muted' });
-  const daily = h('div', {}, h('div', { class: 'section-title' }, h('span', { text: '출석 보상' })), h('div', { class: 'card' }, attendDays, attendBtn), h('div', { class: 'section-title' }, h('span', { text: '일일 미션' }), missionBonus), missionList);
+  const attendPane = h('div', {}, h('div', { class: 'section-title' }, h('span', { text: '출석 보상' })), h('div', { class: 'card' }, attendDays, attendBtn), h('div', { class: 'tiny muted', style: 'margin-top:6px', text: '7일 주기로 반복되며 마지막 날 보상이 가장 큽니다.' }));
+  const missionPane = h('div', {}, h('div', { class: 'section-title' }, h('span', { text: '일일 미션' }), missionBonus), missionList, h('div', { class: 'tiny muted', style: 'margin-top:6px', text: '매일 자정에 초기화됩니다.' }));
   const rank = createRankTab(game, rankHooks);
   const sub = h('div', { class: 'menu-grid' });
   const sections: Record<string, HTMLElement> = {};
@@ -56,7 +57,8 @@ export function createRecordTab(game: Game, rankHooks: RankTabHooks, hooks: { op
   let active = 'quest';
   const body = h('div');
   const entries: [string, string, HTMLElement][] = [
-    ['daily', '📋 미션', daily],
+    ['attend', '🗓️ 출석', attendPane],
+    ['mission', '📋 미션', missionPane],
     ['quest', '🎯 퀘스트', h('div', {}, h('div', { class: 'card quest-card' }, h('div', { class: 'row' }, questTitle, h('span', { class: 'small gem', text: '' })), h('div', { class: 'bar' }, questBar), questText), h('div', { class: 'section-title' }, h('span', { text: '업적' })), achWrap)],
     ['codex', '📖 도감', h('div', {}, h('div', { class: 'small muted', style: 'margin-bottom:6px', text: '몬스터를 처치하면 등록됩니다. 종류당 공격력·체력 +1% (최대 40종).' }), codex)],
     ['stats', '📊 통계', stats],
@@ -77,11 +79,11 @@ export function createRecordTab(game: Game, rankHooks: RankTabHooks, hooks: { op
     if (id === 'rank') rank.onShow?.();
   }
   const el = h('div', {}, sub, body);
-  show('daily');
+  show('attend');
 
   function update(): void {
     const s = game.state;
-    if (active === 'daily') {
+    if (active === 'attend' || active === 'mission') {
       const today = todayKey();
       const avail = attendanceAvailable(s, today);
       attendBtn.disabled = !avail;

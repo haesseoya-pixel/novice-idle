@@ -23,7 +23,7 @@ export interface HudHooks {
   selectStage: (n: number) => void;
   openMenu: (sub: string) => void;
   openDungeon: () => void;
-  openTab: (id: 'growth' | 'gear' | 'summon' | 'skill' | 'job' | 'dungeon' | 'record') => void;
+  openTab: (id: 'growth' | 'gear' | 'companion' | 'skill' | 'adventure' | 'summon' | 'record' | 'job') => void;
 }
 
 export const SKILL_ICON: Record<SkillDef['fx'], string> = { basic: '⚔️', slash: '🗡️', quake: '🌋', shield: '🛡️', ultWarrior: '💥', fireball: '🔥', lightning: '⚡', firefield: '🔥', meteor: '☄️', doubleShot: '🏹', arrowRain: '🌧️', poison: '☠️', ultArcher: '🌠', assassinate: '🗡️', shuriken: '✴️', stealth: '👤', ultThief: '🌑' };
@@ -109,10 +109,10 @@ export class Hud {
     this.skillBar = h('div', { class: 'skill-bar' });
     // quick column (right)
     const quickDefs: [string, string, string, () => void][] = [
-      ['attend', '🗓️', '출석', () => hooks.openMenu('daily')],
-      ['mission', '📋', '미션', () => hooks.openMenu('daily')],
-      ['dungeon', '🏰', '던전', () => hooks.openDungeon()],
-      ['raid', '👹', '레이드', () => hooks.openDungeon()],
+      ['attend', '🗓️', '출석', () => hooks.openMenu('attend')],
+      ['mission', '📋', '미션', () => hooks.openMenu('mission')],
+      ['quest', '🎯', '퀘스트', () => hooks.openMenu('quest')],
+      ['codex', '📖', '도감', () => hooks.openMenu('codex')],
       ['rank', '🏆', '랭킹', () => hooks.openMenu('rank')],
     ];
     const quickCol = h('div', { class: 'quick-col' });
@@ -128,7 +128,7 @@ export class Hud {
     }
     // top-right icons
     const topDefs: [string, string, string, () => void][] = [
-      ['codex', '📖', '도감', () => hooks.openMenu('codex')],
+      ['adventure', '🏰', '모험', () => hooks.openDungeon()],
       ['stats', '📊', '통계', () => hooks.openMenu('stats')],
       ['settings', '⚙️', '설정', () => hooks.openSettings()],
     ];
@@ -216,9 +216,9 @@ export class Hud {
     setText(this.expText, `EXP ${(ef * 100).toFixed(1)}%`);
 
     if (b.mode === 'stage') {
-      setText(this.stageName, `${info.region.index + 1}. ${info.region.name}${info.loop > 0 ? ` (${info.loop + 1}회차)` : ''}`);
+      setText(this.stageName, `${info.chapter + 1}. ${info.chapterName}${info.loop > 0 ? ` (${info.loop + 1}회차)` : ''}`);
       const boss = info.isBoss && s.progress.bossMode;
-      setText(this.stageSub, boss ? `👑 ${info.region.boss.title}` : `Stage ${info.stage}/10 · ${s.progress.farmStage !== null ? '반복 사냥' : '진행'} ${Math.min(b.waveTotal, b.waveKilled)}/${b.waveTotal}`);
+      setText(this.stageSub, boss ? `👑 ${info.region.boss.title}` : `Stage ${info.stage}/20 · ${s.progress.farmStage !== null ? '반복 사냥' : '진행'} ${Math.min(b.waveTotal, b.waveKilled)}/${b.waveTotal}`);
       this.waveBar.style.width = `${((Math.min(b.waveTotal, b.waveKilled) / Math.max(1, b.waveTotal)) * 100).toFixed(0)}%`;
       this.prevBtn.disabled = s.progress.stage <= 1 || b.heroDead;
       const atFrontier = s.progress.stage >= s.progress.maxStage;
@@ -295,8 +295,10 @@ export class Hud {
     const today = todayKey();
     this.quick.attend!.badge.hidden = !attendanceAvailable(s, today);
     this.quick.mission!.badge.hidden = !MISSIONS.some((m) => missionDone(s, m.id) && !missionClaimed(s, m.id));
-    this.quick.raid!.badge.hidden = !(s.daily.raidTickets > 0 && s.progress.maxStage >= 5);
-    this.quick.dungeon!.badge.hidden = !(b.mode === 'stage' && (s.daily.goldTickets > 0 || s.daily.gemTickets > 0) && s.progress.maxStage >= 5);
+    this.topIcons.adventure!.badge.hidden = !(b.mode === 'stage' && (s.daily.goldTickets > 0 || s.daily.gemTickets > 0 || s.daily.towerTickets > 0 || s.daily.raidTickets > 0) && s.progress.maxStage >= 5);
+    this.quick.quest!.badge.hidden = s.quest.progress < s.quest.target;
+    this.quick.codex!.badge.hidden = true;
+    this.quick.rank!.badge.hidden = true;
     // guide quest
     const qt = questType(s);
     setText(this.questTitle, QUEST_NAMES[qt]);

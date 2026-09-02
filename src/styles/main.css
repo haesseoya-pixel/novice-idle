@@ -1271,3 +1271,82 @@ button.buy,
     font-size: 13px;
   }
 }
+
+/* 모험 탭 카드 · 소환 배너 */
+.adv-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.adv-banner {
+  height: 56px;
+  background: linear-gradient(120deg, color-mix(in srgb, var(--dc) 45%, #1a1333), #1a1333);
+  background-size: cover;
+  background-position: center;
+  border-bottom: 2px solid var(--dc);
+}
+.adv-body {
+  padding: 7px 10px 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.adv-body b {
+  font-size: 14px;
+  color: var(--dc);
+}
+.adv-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+.adv-actions:empty {
+  display: none;
+}
+.shop-banner {
+  height: 72px;
+  border-radius: 12px;
+  border: 2px solid var(--dc);
+  background: linear-gradient(120deg, color-mix(in srgb, var(--dc) 45%, #1a1333), #1a1333);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+.shop-banner-title b {
+  font-size: 16px;
+  display: block;
+  text-shadow: 0 2px 4px #000;
+}
+.shop-banner-title span {
+  color: #fff;
+  opacity: 0.85;
+  text-shadow: 0 1px 3px #000;
+}
+.comp-icon img {
+  width: 30px;
+  height: 30px;
+  image-rendering: pixelated;
+}
+
+/* 소환 확률 표 */
+.rate-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.rate-row {
+  display: flex;
+  justify-content: space-between;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}

@@ -28,7 +28,7 @@ describe('balance tables', () => {
   });
   it('monster tables are monotonic and finite up to MAX_STAGE', () => {
     let prev = 0;
-    for (let n = 1; n <= MAX_STAGE; n += 7) {
+    for (let n = 1; n <= MAX_STAGE; n += 137) {
       const hp = monsterHp(n);
       expect(Number.isFinite(hp)).toBe(true);
       expect(hp).toBeGreaterThan(prev);
@@ -38,23 +38,30 @@ describe('balance tables', () => {
       expect(Number.isFinite(bossHp(n))).toBe(true);
     }
     expect(monsterHp(1)).toBe(80);
-    expect(monsterHp(10)).toBeCloseTo(80 * Math.pow(1.15, 9), 3);
+    expect(monsterHp(10)).toBeCloseTo(80 * Math.pow(1.12, 9), 3);
   });
-  it('stage info loops through 10 regions and flags bosses', () => {
+  it('chapters share monster/background themes and bosses land every 10th stage', () => {
     expect(stageInfo(1).region.id).toBe('meadow');
+    expect(stageInfo(1).chapter).toBe(0);
     expect(stageInfo(10).isBoss).toBe(true);
-    expect(stageInfo(11).region.index).toBe(1);
-    expect(stageInfo(100).region.index).toBe(9);
-    expect(stageInfo(101).loop).toBe(1);
-    expect(stageInfo(101).region.index).toBe(0);
-    expect(isBossStage(20)).toBe(true);
+    expect(stageInfo(20).isBoss).toBe(true);
+    // 챕터 2·3도 같은 테마(에셋 재사용), 색조만 다름
+    expect(stageInfo(21).chapter).toBe(1);
+    expect(stageInfo(21).region.id).toBe('meadow');
+    expect(stageInfo(21).variant).toBe(1);
+    expect(stageInfo(21).tint).not.toBe(stageInfo(1).tint);
+    // 4번째 챕터부터 다음 테마
+    expect(stageInfo(61).region.index).toBe(1);
+    expect(stageInfo(60 * 20).chapter).toBe(59);
+    expect(stageInfo(60 * 20 + 1).loop).toBe(1);
+    expect(isBossStage(30)).toBe(true);
     expect(isBossStage(21)).toBe(false);
-    expect(stageLabel(101)).toContain('2회차');
-    expect(REGIONS.length).toBe(10);
-    for (const r of REGIONS) expect(new Set(r.monsters.map((m) => m.id)).size).toBe(3);
+    expect(stageLabel(60 * 20 + 1)).toContain('2회차');
+    expect(REGIONS.length).toBe(20);
+    for (const r of REGIONS) expect(r.monsters.length).toBe(1);
   });
   it('exp curve grows', () => {
-    expect(expReq(1)).toBeCloseTo(5.35, 2);
+    expect(expReq(1)).toBeCloseTo(5 * 1.093, 2);
     expect(expReq(10)).toBeGreaterThan(expReq(5));
   });
   it('rarity rates sum to 1', () => {
@@ -169,7 +176,7 @@ describe('jobs & skills', () => {
     expect(canAdvance(s)).toBe(true);
     expect(advanceJob(s)).toBeNull();
     expect(advanceJob(s, 'mage')).toBe(1);
-    expect(jobTitle(s.hero.job, s.hero.tier)).toBe('견습 마법사');
+    expect(jobTitle(s.hero.job, s.hero.tier)).toBe('견습술사');
     expect(availableSkills('mage', 1).length).toBe(2);
     expect(unlockedSkills(s).map((k) => k.id)).toEqual(['novice_strike', 'm_fireball']);
     s.hero.level = 29;

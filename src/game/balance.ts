@@ -7,9 +7,17 @@ export const BACKUP_KEY_PREFIX = 'novice-idle:backup:v';
 export const TICK = 0.05; // battle tick seconds (20 Hz)
 export const MAX_TICKS_PER_FRAME = 100; // 5 s of catch-up per frame
 export const AUTOSAVE_INTERVAL = 10;
-export const MAX_STAGE = 3000;
-export const STAGES_PER_REGION = 10;
-export const REGION_COUNT = 10;
+export const MAX_STAGE = 2400; // 2회차까지 (챕터 60 × 20 × 2)
+export const STAGES_PER_CHAPTER = 20;
+export const BOSS_EVERY = 10;
+/** 몬스터/배경 테마 수 (에셋 세트) */
+export const THEME_COUNT = 20;
+/** 테마 하나를 공유하는 챕터 수 — 색조만 바꿔 재사용하므로 에셋 없이 챕터가 늘어난다 */
+export const CHAPTERS_PER_THEME = 3;
+export const CHAPTER_COUNT = THEME_COUNT * CHAPTERS_PER_THEME;
+/** 하위 호환 별칭 */
+export const STAGES_PER_REGION = STAGES_PER_CHAPTER;
+export const REGION_COUNT = THEME_COUNT;
 
 export type UpgradeId = 'atk' | 'hp' | 'def' | 'crit' | 'critDmg' | 'aspd' | 'regen' | 'gold';
 export const UPGRADE_IDS: readonly UpgradeId[] = ['atk', 'hp', 'def', 'crit', 'critDmg', 'aspd', 'regen', 'gold'];
@@ -41,13 +49,14 @@ export const UPGRADE_BY_ID: Record<UpgradeId, UpgradeDef> = Object.fromEntries(U
 
 export const MONSTER = {
   hpBase: 80,
-  hpGrowth: (n: number) => (n <= 30 ? 1.15 : n <= 100 ? 1.17 : 1.19),
+  // 초반은 퍼주고(1~40), 중반부터 벽이 생기고(41~150), 후반은 계단식으로 막힌다
+  hpGrowth: (n: number) => (n <= 40 ? 1.12 : n <= 150 ? 1.175 : n <= 400 ? 1.21 : 1.24),
   atkBase: 1.0,
-  atkGrowth: (n: number) => (n <= 100 ? 1.1 : 1.11),
+  atkGrowth: (n: number) => (n <= 150 ? 1.1 : 1.12),
   goldBase: 2,
-  goldGrowth: (n: number) => (n <= 100 ? 1.07 : 1.09),
+  goldGrowth: (n: number) => (n <= 40 ? 1.12 : n <= 150 ? 1.085 : 1.1),
   expBase: 2,
-  expGrowth: 1.08,
+  expGrowth: 1.085,
   speed: 90, // px/s on a 360px logical width
   attackInterval: 1.5,
   meleeOffset: 36,
@@ -58,7 +67,7 @@ export const MONSTER = {
 } as const;
 
 export const BOSS = {
-  hpMult: (n: number) => 5 + n / 10,
+  hpMult: (n: number) => 6 + n / 6,
   atkMult: 2.5,
   attackInterval: 2.0,
   speedMult: 0.7,
@@ -82,7 +91,8 @@ export const HERO = {
 } as const;
 
 /** EXP required to go from level L to L+1. */
-export const expReq = (L: number): number => 5 * L * Math.pow(1.07, L);
+/** 레벨이 오를수록 랩업이 급격히 느려진다. */
+export const expReq = (L: number): number => 5 * L * Math.pow(1.093, L);
 
 export const GEMS = {
   bossFirstClear: (n: number) => 5 + Math.floor(n / 4),

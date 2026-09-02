@@ -203,11 +203,12 @@ export class Scene {
     const b = this.game.battle;
     const s = this.game.state;
     const info = stageInfo(b.stage);
-    const hue = s.settings.reducedMotion ? 0 : (info.loop * 40) % 360;
+    const hue = s.settings.reducedMotion ? 0 : ((info.tint % 360) + 360) % 360;
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     const shake = this.fx.reduced ? 0 : this.fx.shake;
     if (shake > 0) ctx.translate((Math.random() - 0.5) * shake * 12, (Math.random() - 0.5) * shake * 8);
-    drawBackground(ctx, info.region, this.w, this.h, this.gy, this.scroll, this.time, this.assets, hue);
+    const bgOverride = b.mode === 'tower' ? 'bg_tower' : b.mode === 'raid' ? 'bg_raid' : b.mode === 'arena' ? 'bg_arena' : b.mode === 'dungeonGold' ? 'bg_dungeon_gold' : b.mode === 'dungeonGem' ? 'bg_dungeon_gem' : null;
+    drawBackground(ctx, info.region, this.w, this.h, this.gy, this.scroll, this.time, this.assets, hue, bgOverride);
     if (b.mode !== 'stage') {
       ctx.fillStyle = b.mode === 'dungeonGold' ? 'rgba(255,209,102,0.10)' : 'rgba(179,136,255,0.14)';
       ctx.fillRect(0, 0, this.w, this.h);
@@ -378,7 +379,7 @@ export class Scene {
     ctx.fillStyle = signImg ? '#fff' : '#3a2200';
     ctx.font = 'bold 8px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`${info.region.name.slice(0, 5)} ${info.stage}`, signImg ? 29 : 26, signImg ? -20 : -39);
+    ctx.fillText(`${info.chapterName.slice(0, 6)} ${info.stage}`, signImg ? 29 : 26, signImg ? -20 : -39);
   }
 
   private hpBar(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, frac: number, color: string): void {

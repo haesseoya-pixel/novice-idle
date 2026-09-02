@@ -58,9 +58,12 @@ describe.skipIf(!process.env.PACING)('pacing bot', () => {
   it('reaches design targets', () => {
     const { gs, milestones, maxGap } = runBot(120);
     console.log('milestones (min):', JSON.stringify(milestones), 'maxGap', maxGap.toFixed(0), 'level', gs.hero.level, 'maxStage', gs.progress.maxStage, 'gems', gs.gems, 'upgrades', JSON.stringify(gs.hero.upgrades));
-    expect(milestones.stage10).toBeLessThan(12);
-    expect(milestones.job1).toBeLessThan(15);
-    expect(milestones.stage30).toBeLessThan(50);
+    // 초반은 퍼주고, 뒤로 갈수록 벽이 생기는 곡선
+    expect(milestones.stage10).toBeLessThan(10);
+    expect(milestones.job1).toBeLessThan(12);
+    expect(milestones.stage40).toBeLessThan(25);
+    expect(milestones.stage100).toBeGreaterThan(30);
+    expect(gs.progress.maxStage).toBeLessThan(200);
     expect(maxGap).toBeLessThan(75);
     for (const u of UPGRADES) expect(gs.hero.upgrades[u.id]).toBeLessThanOrEqual(u.max);
   }, 120000);

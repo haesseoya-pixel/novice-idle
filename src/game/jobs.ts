@@ -51,7 +51,7 @@ export const JOBS: Record<JobPath, JobDef> = {
   warrior: {
     path: 'warrior',
     name: '전사',
-    tiers: ['검사', '기사', '성기사', '검성'],
+    tiers: ['검사', '파수병', '강철심장', '불굴의 용장'],
     weapon: '검',
     color: '#ff7a59',
     description: '튼튼한 근접 전투가. 체력과 방어력이 높고 강타로 단일 적을 부숩니다.',
@@ -72,7 +72,7 @@ export const JOBS: Record<JobPath, JobDef> = {
   mage: {
     path: 'mage',
     name: '마법사',
-    tiers: ['견습 마법사', '원소술사', '대마법사', '아크메이지'],
+    tiers: ['견습술사', '원소술사', '비전학자', '별빛 마도사'],
     weapon: '지팡이',
     color: '#7f8cff',
     description: '원거리 광역 마법사. 스킬 피해가 높고 여러 적을 한 번에 태웁니다.',
@@ -93,7 +93,7 @@ export const JOBS: Record<JobPath, JobDef> = {
   archer: {
     path: 'archer',
     name: '궁수',
-    tiers: ['사냥꾼', '레인저', '저격수', '신궁'],
+    tiers: ['사냥꾼', '순찰자', '매의 눈', '바람길잡이'],
     weapon: '활',
     color: '#7ed957',
     description: '빠른 원거리 딜러. 공격 속도가 높고 화살비로 무리를 쓸어냅니다.',
@@ -114,7 +114,7 @@ export const JOBS: Record<JobPath, JobDef> = {
   thief: {
     path: 'thief',
     name: '도적',
-    tiers: ['도둑', '암살자', '그림자', '야행자'],
+    tiers: ['도둑', '그림자꾼', '밤의 손', '무영각'],
     weapon: '단검',
     color: '#c78bff',
     description: '치명타 특화 근접 딜러. 은신으로 위기를 넘기고 암살로 큰 피해를 줍니다.',

@@ -1,4 +1,4 @@
-import { ARENA, BOSS, DUNGEON, GEMS, HERO, JOB_LEVELS, MONSTER, RAID, STAGES_PER_REGION, TOWER, expReq } from './balance';
+import { ARENA, BOSS, BOSS_EVERY, DUNGEON, GEMS, HERO, JOB_LEVELS, MONSTER, RAID, TOWER, expReq } from './balance';
 import { equippedCompanions } from './companions';
 import { missionProgress } from './missions';
 import type { SkillDef } from './jobs';
@@ -425,7 +425,7 @@ function stageClear(gs: GameState, b: BattleState, events: BattleEvent[]): void 
   if (next > gs.progress.maxStage) gs.progress.maxStage = next;
   if (isBossStage(next)) gs.progress.bossMode = true;
   // milestone gems on first arrival at multiples of 10 (after clearing the boss below it)
-  if (n % STAGES_PER_REGION === 0 && !gs.progress.milestones.includes(n)) {
+  if (n % BOSS_EVERY === 0 && !gs.progress.milestones.includes(n)) {
     gs.progress.milestones.push(n);
     const gems = GEMS.milestone(n);
     gs.gems += gems;

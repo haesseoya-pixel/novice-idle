@@ -1,5 +1,5 @@
 import type { Game } from '@/app/game';
-import { FUSION, GEMS, PITY, POTENTIAL, RARITY_COLORS, RARITY_NAMES, SLOTS, SLOT_NAMES, STARFORCE, type Rarity, type Slot } from '@/game/balance';
+import { FUSION, POTENTIAL, RARITY_COLORS, RARITY_NAMES, SLOTS, SLOT_NAMES, STARFORCE, type Rarity, type Slot } from '@/game/balance';
 import { canFuse, itemKey, starforceCost } from '@/game/equipment';
 import { JOBS } from '@/game/jobs';
 import { formatLine } from '@/game/potential';
@@ -25,9 +25,6 @@ export function itemIcon(assets: Assets, game: Game, slot: Slot, rarity: Rarity)
 }
 
 export function createGearTab(game: Game, assets: Assets): TabView {
-  const pullOne = h('button', { class: 'purple', text: `1회 뽑기 · ${GEMS.pullCost}★`, on: { click: () => game.gacha(1) } }) as HTMLButtonElement;
-  const pullTen = h('button', { class: 'primary', text: `10회 뽑기 · ${GEMS.tenPullCost}★`, on: { click: () => game.gacha(10) } }) as HTMLButtonElement;
-  const pity = h('div', { class: 'tiny muted', style: 'margin-top:6px' });
   const slotCards = new Map<Slot, { root: HTMLElement; name: HTMLElement; val: HTMLElement; stars: HTMLElement; star: HTMLButtonElement; cubeBtn: HTMLButtonElement; icon: HTMLElement; pot: HTMLElement; iconKey: string }>();
   const slotsWrap = h('div', { class: 'slot-grid' });
   for (const slot of SLOTS) {
@@ -60,10 +57,8 @@ export function createGearTab(game: Game, assets: Assets): TabView {
   const el = h(
     'div',
     {},
-    h('div', { class: 'section-title' }, h('span', { text: '장착 장비 · 스타포스 · 잠재능력' })),
+    h('div', { class: 'section-title' }, h('span', { text: '장착 장비 · 별빛 단련 · 룬 각인' })),
     slotsWrap,
-    h('div', { class: 'section-title' }, h('span', { text: '장비 뽑기' })),
-    h('div', { class: 'card' }, h('div', { class: 'row', style: 'gap:8px' }, pullOne, pullTen), pity, h('div', { class: 'tiny muted', style: 'margin-top:4px', text: '일반 40% · 고급 30% · 희귀 17% · 영웅 9% · 전설 3.2% · 신화 0.8%. 10연은 희귀 이상 보장, 30회마다 영웅, 100회마다 전설 보장. 중복은 장비 레벨업(+8%).' })),
     h('div', { class: 'section-title' }, h('span', { text: '인벤토리 · 합성' }), fuseAllBtn),
     bonus,
     inv,
@@ -72,9 +67,6 @@ export function createGearTab(game: Game, assets: Assets): TabView {
 
   function update(): void {
     const s = game.state;
-    pullOne.disabled = s.gems < GEMS.pullCost;
-    pullTen.disabled = s.gems < GEMS.tenPullCost;
-    setText(pity, `보유 ${s.gems}★ · 영웅 보장까지 ${Math.max(0, PITY.heroEvery - s.pity.sinceHero)}회 · 전설 보장까지 ${Math.max(0, PITY.legendEvery - s.pity.sinceLegend)}회 · 누적 ${s.pity.pulls}회`);
     for (const slot of SLOTS) {
       const c = slotCards.get(slot)!;
       const key = s.hero.equipped[slot];
@@ -87,10 +79,10 @@ export function createGearTab(game: Game, assets: Assets): TabView {
         setText(c.stars, '');
         c.root.style.setProperty('--rc', 'var(--line2)');
         c.star.disabled = true;
-        setText(c.star, '★ 스타포스');
+        setText(c.star, '★ 별빛 단련');
         c.cubeBtn.disabled = true;
-        setText(c.cubeBtn, '◆ 큐브');
-        c.pot.replaceChildren(h('span', { class: 'muted', text: '잠재능력 없음' }));
+        setText(c.cubeBtn, '◆ 룬석');
+        c.pot.replaceChildren(h('span', { class: 'muted', text: '룬 각인 없음' }));
         continue;
       }
       const { rarity } = parseItemKey(key);
@@ -111,9 +103,9 @@ export function createGearTab(game: Game, assets: Assets): TabView {
       c.star.disabled = maxed || s.gold < cost;
       setText(c.star, maxed ? '★ MAX' : `★${stars + 1} · ${N(cost)}G`);
       c.cubeBtn.disabled = s.gems < POTENTIAL.cubeCost;
-      setText(c.cubeBtn, `◆ 큐브 ${POTENTIAL.cubeCost}★`);
+      setText(c.cubeBtn, `◆ 룬석 ${POTENTIAL.cubeCost}★`);
       const gradeColor = POTENTIAL.gradeColors[p.grade] ?? '#fff';
-      c.pot.replaceChildren(h('b', { text: `[${POTENTIAL.grades[p.grade]}]`, style: `color:${gradeColor}` }), ...(p.lines.length ? p.lines.map((l) => h('div', { text: formatLine(l) })) : [h('div', { class: 'muted', text: '큐브로 잠재능력을 뽑으세요' })]));
+      c.pot.replaceChildren(h('b', { text: `[${POTENTIAL.grades[p.grade]}]`, style: `color:${gradeColor}` }), ...(p.lines.length ? p.lines.map((l) => h('div', { text: formatLine(l) })) : [h('div', { class: 'muted', text: '룬석로 룬 각인을 뽑으세요' })]));
     }
     setText(bonus, `도감 보유 효과: 공격력·체력 +${(collectionBonus(s) * 100).toFixed(1)}% (장비 레벨 합 × 0.5%) · 몬스터 도감 +${(codexBonus(s) * 100).toFixed(0)}%`);
     let fusable = false;

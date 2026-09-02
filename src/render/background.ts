@@ -27,8 +27,8 @@ function tileImage(ctx: CanvasRenderingContext2D, img: HTMLImageElement, y: numb
  * Draws sky, parallax layers and the ground strip for a region in screen space.
  * `scroll` is the world distance walked (px); layers move at different fractions of it.
  */
-export function drawBackground(ctx: CanvasRenderingContext2D, region: Region, w: number, h: number, groundY: number, scroll: number, time: number, assets: Assets, hue: number): void {
-  const far = assets.image(`bg_${region.id}_far`);
+export function drawBackground(ctx: CanvasRenderingContext2D, region: Region, w: number, h: number, groundY: number, scroll: number, time: number, assets: Assets, hue: number, override?: string | null): void {
+  const far = (override ? assets.image(override) : null) ?? assets.image(`bg_${region.id}_far`);
   const near = assets.image(`bg_${region.id}_near`);
   const groundImg = assets.image(`ground_${region.id}`);
   ctx.save();

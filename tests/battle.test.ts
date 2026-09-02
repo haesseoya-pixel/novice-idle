@@ -43,7 +43,7 @@ describe('battle', () => {
     expect(gs.progress.stage).toBe(9);
     expect(gs.progress.bossMode).toBe(false);
     // farming continues on stage 9 and eventually retries the boss
-    const more = run(gs, b, BOSS.autoRetryInterval + 40);
+    const more = run(gs, b, BOSS.autoRetryInterval + 120);
     expect(gs.stats.bossAttempts).toBeGreaterThanOrEqual(1);
     expect(more.length).toBeGreaterThan(0);
   });

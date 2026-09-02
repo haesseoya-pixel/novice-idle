@@ -66,7 +66,7 @@ async function boot(): Promise<void> {
       if (game.selectStage(n)) synth.ui();
     },
     openMenu: (sub) => panels.show('record', sub),
-    openDungeon: () => panels.show('dungeon'),
+    openDungeon: () => panels.show('adventure'),
     openTab: (id) => panels.show(id),
   });
 
@@ -218,7 +218,7 @@ async function boot(): Promise<void> {
   });
   game.events.on('cube', ({ upgraded, potential }) => {
     synth.gacha(upgraded ? 4 : 1);
-    if (upgraded) toasts.show(`잠재능력 등급 상승! ${['레어', '에픽', '유니크', '레전드리'][potential.grade]}`, 'milestone', '큐브');
+    if (upgraded) toasts.show(`룬 각인 등급 상승! ${['레어', '에픽', '유니크', '레전드리'][potential.grade]}`, 'milestone', '룬석');
   });
   game.events.on('cannotAfford', () => synth.cannotAfford());
   game.events.on('gacha', ({ results }) => {

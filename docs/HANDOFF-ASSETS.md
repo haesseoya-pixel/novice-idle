@@ -6,7 +6,7 @@
 - 개발 서버: `npm run dev` (기본 5175 포트), 타입체크 `npx tsc --noEmit -p .`, 테스트 `npm test`
 - 에셋 루트: `public/assets/`
 - 슬롯 목록 출력: `node tools/asset-list.mjs` (사람용) / `--json` (기계용) / `--manifest` (매니페스트 뼈대)
-- **총 275 슬롯 / 파일 941장** (움직이는 것은 전부 프레임 애니메이션, UI 스킨·투사체·스킬 이펙트 포함)
+- **총 363 슬롯 / 파일 1115장** (움직이는 것은 전부 프레임 애니메이션, UI 스킨·투사체·스킬 이펙트·던전 배경 포함)
 
 ---
 
@@ -82,12 +82,13 @@ side view, full body, centered, transparent background, no text, no watermark, n
 | 그룹 | 개수 | id 형식 | 권장 해상도 | 프레임 | 논리 높이 |
 |---|---|---|---|---|---|
 | 주인공 | 17 | `hero_novice`, `hero_{warrior\|mage\|archer\|thief}_{1..4}` | 256×256 | idle×2 walk×4 attack×3 cast×2 hit×1 death×3 | 64 |
-| 몬스터 | 30 | `fluff`, `hopbun`, … (지역별 3종 × 10) | 256×256 | idle×2 walk×2 attack×2 hit×1 death×2 | 64 |
-| 보스 | 10 | `fluffking`, `guardiantree`, … | 320×320 | idle×2 walk×2 attack×3 hit×1 death×3 | 72 |
+| 몬스터 | 20 | `fluff`, `acornspirit`, … (테마당 1종) | 256×256 | idle×2 walk×2 attack×2 hit×1 death×2 | 64 |
+| 보스 | 20 | `fluffking`, `guardiantree`, … (테마당 1종) | 320×320 | idle×2 walk×2 attack×3 hit×1 death×3 | 72 |
 | 레이드/아레나 | 2 | `raidlord`, `ghost` | 320×320 | 보스와 동일 | 72 |
 | 펫 | 6 | `pet_0` … `pet_5` (등급순) | 128×128 | idle×2 | 34 |
-| 동료 | 8 | `companion_{id}` + 아이콘 `companion_icon_{id}` | 128×128 | idle×2 attack×2 | 30 |
-| 배경 | 30 | `bg_{region}_far` / `bg_{region}_near` / `ground_{region}` | 1024×576 / 1024×384 / 512×256 | – | – |
+| 동료 | 30 | `companion_{id}` + 아이콘 `companion_icon_{id}` · 희귀10·영웅8·전설6·신화4·초월2 | 128×128 | idle×2 attack×2 | 30 |
+| 배경(테마 20) | 60 | `bg_{theme}_far` / `bg_{theme}_near` / `ground_{theme}` | 1024×576 / 1024×384 / 512×256 | – | – |
+| 콘텐츠 배경·배너 | 14 | `bg_dungeon_gold`, `bg_tower`, `bg_raid`, `bg_arena`, `banner_*` | 1024×576 / 768×256 | – | – |
 | 장비 아이콘 | 48 | `icon_weapon_{job}_{0..5}`, `icon_{armor\|accessory\|pet}_{0..5}` | 128×128 | – | – |
 | 스킬 아이콘 | 17 | `skill_{skillId}` | 128×128 | – | – |
 | 유물 | 6 | `artifact_{id}` | 128×128 | – | – |
@@ -100,13 +101,15 @@ side view, full body, centered, transparent background, no text, no watermark, n
 | 강화 아이콘 | 7 | `ui_stat_{atk\|hp\|def\|crit\|critdmg\|aspd\|regen}` | 96×96 | – | – |
 | 이펙트 | 17 | `fx_{id}` | 256×256 | – | – |
 
-지역 10곳(고정 순서): `meadow 초록 초원` · `fireflyforest 반딧불 숲` · `shellbeach 소라 해변` · `candlehouse 촛불 폐가` · `frostpeak 서리 산` · `sanddune 모래 사막` · `ruins 고대 유적` · `skygarden 하늘 정원` · `dragonnest 용의 둥지` · `abyss 심연`
+테마 20종(= 몬스터 1 + 보스 1 + 배경 3장 세트). **챕터 3개가 테마 하나를 색조만 바꿔 공유**하므로, 이 20세트로 챕터 60개(1200 스테이지)가 만들어집니다. 챕터를 더 늘리고 싶으면 테마만 추가하면 됩니다.
+
+`meadow 초록 초원` · `fireflyforest 반딧불 숲` · `shellbeach 소라 해변` · `candlehouse 촛불 폐가` · `frostpeak 서리 산` · `sanddune 모래 사막` · `ruins 고대 유적` · `skygarden 하늘 정원` · `dragonnest 용의 둥지` · `abyss 심연` · `mushcave 버섯 동굴` · `clockwork 태엽 공방` · `stormsea 폭풍 바다` · `boneyard 뼈의 무덤` · `crystalvale 수정 계곡` · `ashwaste 잿빛 황야` · `moonshrine 달빛 신전` · `thornmaze 가시 미궁` · `voidgate 공허의 문` · `dawnpeak 여명의 봉우리`
 
 직업 4종과 차수별 콘셉트
-- 전사(빨강 `#ff7a59`) 검사 → 기사 → 성기사 → 검성
-- 마법사(보라 `#7f8cff`) 견습 마법사 → 원소술사 → 대마법사 → 아크메이지
-- 궁수(초록 `#7ed957`) 사냥꾼 → 레인저 → 저격수 → 신궁
-- 도적(연보라 `#c78bff`) 도둑 → 암살자 → 그림자 → 야행자
+- 전사(빨강 `#ff7a59`) 검사 → 파수병 → 강철심장 → 불굴의 용장
+- 마법사(보라 `#7f8cff`) 견습술사 → 원소술사 → 비전학자 → 별빛 마도사
+- 궁수(초록 `#7ed957`) 사냥꾼 → 순찰자 → 매의 눈 → 바람길잡이
+- 도적(연보라 `#c78bff`) 도둑 → 그림자꾼 → 밤의 손 → 무영각
 - 차수가 오를수록: 1차 가벼운 장비 → 2차 어깨 갑옷+짧은 망토 → 3차 화려한 망토+빛나는 무기 → 4차 금색 서클릿 + 오라 + 거대 무기
 
 등급 색(장비 6등급 공통): 일반 회색 → 고급 초록 → 희귀 파랑 → 영웅 보라 → 전설 금색 → 신화 붉은금색
@@ -127,17 +130,19 @@ side view, full body, centered, transparent background, no text, no watermark, n
 
 ## 5. 게임 시스템 (에셋이 어디에 쓰이는지)
 
+표정: `hit` 프레임은 눈을 찡그리고, `attack`은 이를 앙다문 표정, `death`는 눈 감김 — 표정 변화가 프레임에 들어가야 합니다.
+
 전투 화면(HUD)
 - 좌상단: 주인공 초상화(`hero_*`의 idle을 얼굴만 크롭해서 자동 사용) + 레벨·전투력, 그 아래 골드(`ui_gold`)·별점(`ui_gem`)
 - 상단 중앙: 지역명 + `Stage n/10` + 진행 게이지 + 보스 도전/전직 버튼
 - 좌측: 가이드 퀘스트 카드, 우측: 퀵 버튼 5개(`quick_attend/mission/dungeon/raid/rank`)
 - 하단: HP/EXP 바, 스킬 아이콘(`skill_*`), 자동 진행/자동 강화 토글, 다음 스테이지 버튼
-- 하단 탭바 7개(`tab_growth/gear/summon/skill/job/dungeon/record`)
+- 하단 탭바 6개(`tab_growth/gear/companion/skill/adventure/summon`) · 우측 퀵 5개(출석·미션·퀘스트·도감·랭킹) · 우상단 3개(모험·통계·설정)
 
 성장/콘텐츠
 - **돌파 강화**: 골드로 공격력·체력·방어력·치명타·치명타 피해·공격 속도·재생·골드 획득 8종 (×1/×10/×100/MAX, 자동 강화 토글)
 - **전직**: Lv10/30/60/100에 1~4차, 1차에서 전사·마법사·궁수·도적 선택, 별점 300으로 전환 가능
-- **장비**: 4슬롯(무기·방어구·장신구·펫) × 6등급, 별점 뽑기(10연 희귀+ 보장, 30회 영웅, 100회 전설), 같은 장비 5개 → 상위 등급 **합성**, **스타포스** ★25까지, **큐브**로 잠재능력 3줄(레어→에픽→유니크→레전드리)
+- **장비**: 4슬롯(무기·방어구·장신구·펫) × 6등급, 별점 뽑기(10연 희귀+ 보장, 30회 영웅, 100회 전설), 같은 장비 5개 → 상위 등급 **합성**, **별빛 단련** ★25까지, **룬석**로 룬 각인 3줄(레어→에픽→유니크→레전드리)
 - **동료**: 8종 소환(희귀 70 / 영웅 25 / 전설 5%), 3슬롯 장착, 패시브 + 주기 공격
 - **유물** 6종: 별점으로 획득, 골드로 강화 (골드·공격·체력·쿨감·치명피해·경험치)
 - **던전**: 골드 던전, 별점 던전 (입장 or **소탕**), **무한의 탑**(층당 40초), **보스 레이드**(60초 딜량 경쟁), **아레나**(랭킹 유저 고스트와 대결)

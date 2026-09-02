@@ -1,7 +1,7 @@
 import type { Game } from '@/app/game';
 import { GEMS, JOB_LEVELS, JOB_MULT, RARITY_COLORS, RARITY_NAMES, SLOT_NAMES } from '@/game/balance';
 import type { PullResult } from '@/game/equipment';
-import { COMPANION_BY_ID, type CompanionPull } from '@/game/companions';
+import { COMPANION_BY_ID, COMPANION_RARITY_COLORS, COMPANION_RARITY_NAMES, type CompanionPull } from '@/game/companions';
 import { JOBS, JOB_PATHS, jobTitle, type JobPath, type JobTier } from '@/game/jobs';
 import type { OfflineReport } from '@/game/offline';
 import { formatTime } from '@/util/format';
@@ -149,12 +149,12 @@ export class Modals {
   openSummon(results: CompanionPull[]): void {
     const cells = results.map((r, i) => {
       const c = COMPANION_BY_ID[r.id];
-      return h('div', { class: `gacha-cell r${c.rarity}`, style: `--rc:${RARITY_COLORS[c.rarity]};animation-delay:${i * 90}ms` }, h('span', { class: 'gacha-icon', text: c.icon }), h('b', { text: c.name }), h('span', { class: 'small', text: RARITY_NAMES[c.rarity] }), h('span', { class: 'small tag', text: r.isNew ? 'NEW' : `Lv ${r.level}` }));
+      return h('div', { class: `gacha-cell r${Math.min(5, c.rarity)}`, style: `--rc:${COMPANION_RARITY_COLORS[c.rarity]};animation-delay:${i * 90}ms` }, h('span', { class: 'gacha-icon', text: c.icon }), h('b', { text: c.name }), h('span', { class: 'small', text: COMPANION_RARITY_NAMES[c.rarity] }), h('span', { class: 'small tag', text: r.isNew ? 'NEW' : `Lv ${r.level}` }));
     });
     const best = Math.max(...results.map((r) => COMPANION_BY_ID[r.id].rarity));
     const again = h('button', { class: 'primary', text: results.length === 10 ? `다시 10회 (${GEMS.companionTenCost} ★)` : `다시 1회 (${GEMS.companionCost} ★)`, on: { click: () => this.game.summonCompanion(results.length === 10 ? 10 : 1) } }) as HTMLButtonElement;
     again.disabled = this.game.state.gems < (results.length === 10 ? GEMS.companionTenCost : GEMS.companionCost);
-    this.open(h('div', { class: `modal gacha best${best}` }, h('h2', { text: best >= 4 ? '✨ 전설 동료!' : '동료 소환 결과' }), h('div', { class: 'gacha-grid' }, ...cells), h('div', { class: 'small muted', text: '가장 강한 동료 3명이 자동 장착됩니다. 중복은 동료 레벨업.' }), h('div', { class: 'modal-actions' }, h('button', { text: '닫기', on: { click: () => this.close() } }), again)));
+    this.open(h('div', { class: `modal gacha best${best}` }, h('h2', { text: best >= 6 ? '🌟 초월 동료!!' : best >= 5 ? '✨ 신화 동료!' : best >= 4 ? '✨ 전설 동료!' : '동료 소환 결과' }), h('div', { class: 'gacha-grid' }, ...cells), h('div', { class: 'small muted', text: '가장 강한 동료 3명이 자동 장착됩니다. 중복은 동료 레벨업.' }), h('div', { class: 'modal-actions' }, h('button', { text: '닫기', on: { click: () => this.close() } }), again)));
   }
 
   openOffline(r: OfflineReport): void {
@@ -243,7 +243,7 @@ export class Modals {
           h('li', { text: '골드로 8가지 능력을 강화하고, 별점으로 장비를 뽑습니다. 중복 장비는 레벨업.' }),
           h('li', { text: `Lv ${JOB_LEVELS[1]}·${JOB_LEVELS[2]}·${JOB_LEVELS[3]}·${JOB_LEVELS[4]}에 1~4차 전직. 1차에서 전사·마법사·궁수·도적 중 선택, 차수마다 스킬 1개와 큰 배율.` }),
           h('li', { text: '10번째 스테이지마다 보스. 30초 안에 못 잡으면 직전 스테이지에서 농사하며 자동 재도전.' }),
-          h('li', { text: '스타포스: 장착 장비를 골드로 별 25개까지 강화 (별당 +6%).' }),
+          h('li', { text: '별빛 단련: 장착 장비를 골드로 별 25개까지 강화 (별당 +6%).' }),
           h('li', { text: '던전 입장권은 매일 충전. 게임을 꺼도 방치 보상이 쌓입니다 (최대 8시간).' }),
         ),
         h('div', { class: 'modal-actions' }, h('button', { class: 'primary', text: '시작!', on: { click: () => this.close() } })),

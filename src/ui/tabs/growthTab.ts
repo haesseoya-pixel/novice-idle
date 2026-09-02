@@ -57,7 +57,7 @@ export function createGrowthTab(game: Game, assets: Assets, hooks: { openAdvance
     h('div', { class: 'section-title' }, h('span', { text: '돌파 강화' }), h('span', { style: 'display:flex;gap:6px;align-items:center' }, autoBtn, seg)),
     statLine,
     list,
-    h('div', { class: 'tiny muted', style: 'margin-top:8px', text: '레벨업은 자동으로 공격력·체력을 올려줍니다. 능력치는 골드 강화와 장비·잠재능력·동료·유물로 키우세요.' }),
+    h('div', { class: 'tiny muted', style: 'margin-top:8px', text: '레벨업은 자동으로 공격력·체력을 올려줍니다. 능력치는 골드 강화와 장비·룬 각인·동료·유물로 키우세요.' }),
   );
 
   function stat(k: string, v: string): HTMLElement {
