@@ -6,7 +6,7 @@
 - 개발 서버: `npm run dev` (기본 5175 포트), 타입체크 `npx tsc --noEmit -p .`, 테스트 `npm test`
 - 에셋 루트: `public/assets/`
 - 슬롯 목록 출력: `node tools/asset-list.mjs` (사람용) / `--json` (기계용) / `--manifest` (매니페스트 뼈대)
-- **총 363 슬롯 / 파일 1115장** (움직이는 것은 전부 프레임 애니메이션, UI 스킨·투사체·스킬 이펙트·던전 배경 포함)
+- **총 410 슬롯 / 파일 1162장** (움직이는 것은 전부 프레임 애니메이션, UI 스킨·투사체·스킬/적 공격/상태이상/보상 이펙트·던전 배경 포함)
 
 ---
 
@@ -99,7 +99,7 @@ side view, full body, centered, transparent background, no text, no watermark, n
 | UI 스킨 | 20 | `ui_panel`, `ui_btn_*`, `ui_bar_*`, `ui_tabbar`, `ui_modal_frame` … | 64~512 | – | – |
 | 등급 테두리 | 6 | `ui_rarity_{0..5}` | 128×128 | – | – |
 | 강화 아이콘 | 7 | `ui_stat_{atk\|hp\|def\|crit\|critdmg\|aspd\|regen}` | 96×96 | – | – |
-| 이펙트 | 17 | `fx_{id}` | 256×256 | – | – |
+| 이펙트 | 64 | `fx_{id}` | 256×256 | – | – |
 
 테마 20종(= 몬스터 1 + 보스 1 + 배경 3장 세트). **챕터 3개가 테마 하나를 색조만 바꿔 공유**하므로, 이 20세트로 챕터 60개(1200 스테이지)가 만들어집니다. 챕터를 더 늘리고 싶으면 테마만 추가하면 됩니다.
 
@@ -225,3 +225,19 @@ side view, full body, centered, transparent background, no text, no watermark, n
 - 중반부터 벽: 스테이지 100 약 43분, 3차 전직 32분, 4차 전직 100분
 - 후반은 계단식: 몬스터 체력 성장률이 1.12 → 1.175 → 1.21 → 1.24로 단계 상승,
   레벨업 요구 경험치는 `5L × 1.093^L`로 급격히 무거워짐 → 무과금은 하루 단위 사냥/방치로 한 칸씩 넘는 구조
+
+## 11. 이펙트 전체 목록 (64종, 빠짐없이)
+
+`fx_{id}` · 256×256 · 투명 배경 · 가산합성으로 그려지므로 검은 배경 금지, 발광체 위주.
+
+- **타격/피격** `hit` `hit_heavy` `crit` `blocked` `hurt` `guard`
+- **적 공격** `enemy_bite` `enemy_claw` `enemy_smash` `enemy_spit` `enemy_shock` `enemy_wind` `enemy_charge`
+- **사망/처치** `deathpoof` `death_soul` `boss_death`
+- **등장/경고** `boss_intro` `boss_warning` `spawn` `portal_flash`
+- **스킬 공통** `slash` `slash_big` `fireball` `explosion` `lightning` `arrow` `arrow_rain` `shuriken` `poison` `meteor` `quake` `heal` `shield` `stealth` `smoke`
+- **상태이상/버프** `burn` `poisoned` `slow` `stun` `buff_atk` `buff_def`
+- **보상/성장** `coin` `gem_pop` `exp_orb` `levelup` `jobaura` `job_burst` `star_up` `rune_glow` `fuse_flash`
+- **소환 연출** `summon_circle` `summon_beam` `rarity_common` `rarity_rare` `rarity_epic` `rarity_legend` `rarity_myth` `rarity_transcend`
+- **환경 파티클** `dust` `leaf` `snowflake` `ember` `bubble` `spark_trail`
+
+여기에 더해 **스킬별 전용 이펙트 애니메이션** `skillfx_{스킬id}` 17종(3프레임)이 따로 있습니다. 위 `fx_*`는 공용 연출, `skillfx_*`는 각 스킬 고유 연출입니다.

@@ -270,7 +270,81 @@ for (let r = 0; r < 6; r++) add(`ui_rarity_${r}`, 'image', 128, 128, null, `equi
 const STAT_ICON = [['atk', '공격력', 'crossed swords'], ['hp', '체력', 'red heart'], ['def', '방어력', 'blue shield'], ['crit', '치명타 확률', 'target with an arrow'], ['critdmg', '치명타 피해', 'explosion burst'], ['aspd', '공격 속도', 'lightning bolt'], ['regen', '체력 재생', 'green cross with sparkles']];
 for (const [id, ko, desc] of STAT_ICON) add(`ui_stat_${id}`, 'image', 96, 96, null, `game stat icon, ${desc}, ${ICON_STYLE}`, `돌파 강화 아이콘 ${ko}`);
 
-const FX = [['hit', 'white and yellow star-shaped impact spark'], ['crit', 'bright orange critical hit burst with stars'], ['slash', 'curved white and orange sword slash arc'], ['fireball', 'round glowing orange fireball with a flame trail'], ['explosion', 'orange and yellow explosion burst'], ['lightning', 'jagged blue-white lightning bolt'], ['arrow', 'glowing green magic arrow'], ['shuriken', 'silver four point throwing star'], ['poison', 'bubbling green poison cloud'], ['meteor', 'flaming meteor rock with a fire trail'], ['heal', 'green sparkling healing light'], ['shield', 'translucent blue hexagonal energy shield bubble'], ['smoke', 'gray smoke puff'], ['levelup', 'golden rising light rays with sparkles'], ['jobaura', 'radiant golden transformation aura pillar'], ['coin', 'spinning gold coin'], ['deathpoof', 'white and gray defeat poof cloud']];
+const FX = [
+  // --- 타격 / 피격 ---
+  ['hit', 'white and yellow star-shaped impact spark'],
+  ['hit_heavy', 'heavy orange impact burst with shockwave ring'],
+  ['crit', 'bright orange critical hit burst with stars and a sharp flash'],
+  ['blocked', 'gray shield clang spark with cross lines'],
+  ['hurt', 'red slash mark and blood-free impact flash for the hero taking damage'],
+  ['guard', 'blue hexagonal guard flash'],
+  // --- 적 공격 (몬스터가 주인공을 칠 때) ---
+  ['enemy_bite', 'sharp fang bite mark with a red crescent'],
+  ['enemy_claw', 'three purple claw slash marks'],
+  ['enemy_smash', 'brown ground smash impact with rocks flying'],
+  ['enemy_spit', 'green acid projectile splash'],
+  ['enemy_shock', 'purple lightning burst from a monster attack'],
+  ['enemy_wind', 'white wind slash arc from a flying monster'],
+  ['enemy_charge', 'motion-blur dash streak used when a monster lunges'],
+  // --- 사망 / 처치 ---
+  ['deathpoof', 'white and gray defeat poof cloud'],
+  ['death_soul', 'small blue soul wisp rising from a defeated monster'],
+  ['boss_death', 'huge golden explosion with light rays for a boss defeat'],
+  // --- 등장 / 경고 ---
+  ['boss_intro', 'red warning shockwave ring with dark smoke for a boss entrance'],
+  ['boss_warning', 'red exclamation warning sign with glow'],
+  ['spawn', 'purple summoning circle flash where a monster appears'],
+  ['portal_flash', 'blue portal entry flash'],
+  // --- 스킬 계열 공통 ---
+  ['slash', 'curved white and orange sword slash arc'],
+  ['slash_big', 'huge crescent sword energy wave'],
+  ['fireball', 'round glowing orange fireball with a flame trail'],
+  ['explosion', 'orange and yellow explosion burst'],
+  ['lightning', 'jagged blue-white lightning bolt'],
+  ['arrow', 'glowing green magic arrow'],
+  ['arrow_rain', 'volley of falling arrows silhouette'],
+  ['shuriken', 'silver four point throwing star'],
+  ['poison', 'bubbling green poison cloud'],
+  ['meteor', 'flaming meteor rock with a fire trail'],
+  ['quake', 'ground crack shockwave with dust'],
+  ['heal', 'green sparkling healing light'],
+  ['shield', 'translucent blue hexagonal energy shield bubble'],
+  ['stealth', 'gray smoke puff with fading silhouette'],
+  ['smoke', 'gray smoke puff'],
+  // --- 상태이상 / 지속효과 ---
+  ['burn', 'small orange flame tick over a target'],
+  ['poisoned', 'green bubble tick over a target'],
+  ['slow', 'blue snowflake tick over a target'],
+  ['stun', 'yellow spinning stars over a target head'],
+  ['buff_atk', 'red rising arrow aura'],
+  ['buff_def', 'blue rising shield aura'],
+  // --- 보상 / 성장 연출 ---
+  ['coin', 'spinning gold coin'],
+  ['gem_pop', 'purple star gem popping with sparkles'],
+  ['exp_orb', 'small blue experience orb'],
+  ['levelup', 'golden rising light rays with sparkles'],
+  ['jobaura', 'radiant golden transformation aura pillar'],
+  ['job_burst', 'white full-screen flash burst for a job advancement'],
+  ['star_up', 'golden star burst for a star refine success'],
+  ['rune_glow', 'purple rune circle glow for a rune engrave'],
+  ['fuse_flash', 'white merge flash with two icons becoming one'],
+  // --- 소환 연출 ---
+  ['summon_circle', 'glowing magic summoning circle on the ground'],
+  ['summon_beam', 'vertical light beam for a rare summon reveal'],
+  ['rarity_common', 'plain white card glow'],
+  ['rarity_rare', 'blue card glow with sparkles'],
+  ['rarity_epic', 'purple card glow with swirling particles'],
+  ['rarity_legend', 'golden card glow with rays and stars'],
+  ['rarity_myth', 'red-gold card glow with flames'],
+  ['rarity_transcend', 'rainbow prismatic card glow with shattering light'],
+  // --- 환경 파티클 ---
+  ['dust', 'small dust puff for footsteps'],
+  ['leaf', 'floating leaf particle'],
+  ['snowflake', 'small snowflake particle'],
+  ['ember', 'small floating ember particle'],
+  ['bubble', 'small water bubble particle'],
+  ['spark_trail', 'small trailing spark particle'],
+];
 for (const [id, desc] of FX) add(`fx_${id}`, 'image', 256, 256, null, `2D game visual effect sprite, ${desc}, cartoon anime style, glowing, centered, transparent background, no text`, `이펙트 ${id} (가산합성으로 그려짐)`);
 
 const total = rows.length;
